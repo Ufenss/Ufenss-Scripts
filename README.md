@@ -1,1 +1,1 @@
-BU SCRIPTI KULLANIYORSAN HARBIDEN KRAL ADAMSINDIR 
+Bu adamın scriptlerini kullanıyorsan harbiden kral adamsındır HECKIRLARIN KRALI
