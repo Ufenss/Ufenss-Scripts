@@ -1,1 +1,1 @@
-Bu adamın scriptlerini kullanıyorsan harbiden kral adamsındır HECKIRLARIN KRALI
+SİZ OROSPUYSANIZ BİZ OROSPU EVLADIYIZ SİZ PİÇSENİZ BİZ PİÇ KURUSUYUZ SİZ AMSANIZ BİZ ANASININ AMIYIZ
