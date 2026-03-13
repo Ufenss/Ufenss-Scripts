@@ -1,11 +1,10 @@
-loadstring([[ 
--- Ufenss HUB - Sürüklenebilir Versiyon
+loadstring([[
+-- Ufenss HUB - Sürüklenebilir Versiyon (Ortalanmış GUI)
 local plr = game.Players.LocalPlayer
 local mouse = plr:GetMouse()
 local cam = workspace.CurrentCamera
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
-
 local lockEnabled = false
 local lockTarget = nil
 
@@ -16,7 +15,7 @@ sg.Parent = game.CoreGui
 
 local frame = Instance.new("Frame", sg)
 frame.Size = UDim2.new(0, 180, 0, 60)
-frame.Position = UDim2.new(1, -190, 1, -70)
+frame.Position = UDim2.new(0.5, -90, 0.5, -30)   -- ← burası değişti (ortada)
 frame.BackgroundColor3 = Color3.fromRGB(20,20,25)
 frame.BorderSizePixel = 0
 
@@ -25,7 +24,7 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0,8)
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1,0,0,24)
 title.BackgroundTransparency = 1
-title.Text = "Ufenss HUB"  -- Burası değişti
+title.Text = "Ufenss HUB"
 title.TextColor3 = Color3.fromRGB(180,100,255)
 title.TextSize = 18
 title.Font = Enum.Font.GothamBold
@@ -34,11 +33,12 @@ local info = Instance.new("TextLabel", frame)
 info.Size = UDim2.new(1,0,0,30)
 info.Position = UDim2.new(0,0,0,24)
 info.BackgroundTransparency = 1
-info.Text = "T : TP    •    L : LOCK ON"
+info.Text = "T : TP • L : LOCK ON"
 info.TextColor3 = Color3.fromRGB(200,200,220)
 info.TextSize = 14
 info.Font = Enum.Font.Gotham
 
+-- (geri kalan kod aynı kalıyor: sürükleme, tp, lock vs...)
 -- Sürükleme Sistemi
 local dragging, dragStart, startPos = false, nil, nil
 
@@ -99,16 +99,16 @@ uis.InputBegan:Connect(function(input, gp)
         if lockEnabled then
             lockTarget = getClosest()
             if lockTarget then
-                info.Text = "T : TP    •    L : LOCK ON (AKTİF)"
+                info.Text = "T : TP • L : LOCK ON (AKTİF)"
                 info.TextColor3 = Color3.fromRGB(100,255,120)
             else
                 lockEnabled = false
-                info.Text = "T : TP    •    L : LOCK ON"
+                info.Text = "T : TP • L : LOCK ON"
                 info.TextColor3 = Color3.fromRGB(200,200,220)
             end
         else
             lockTarget = nil
-            info.Text = "T : TP    •    L : LOCK ON"
+            info.Text = "T : TP • L : LOCK ON"
             info.TextColor3 = Color3.fromRGB(200,200,220)
         end
     end
@@ -123,11 +123,11 @@ rs.RenderStepped:Connect(function()
         else
             lockEnabled = false
             lockTarget = nil
-            info.Text = "T : TP    •    L : LOCK ON"
+            info.Text = "T : TP • L : LOCK ON"
             info.TextColor3 = Color3.fromRGB(200,200,220)
         end
     end
 end)
 
-print("Ufenss HUB yüklendi → Sürüklenebilir | T=TP, L=LOCK")
+print("Ufenss HUB yüklendi → Ortalanmış | T=TP, L=LOCK")
 ]])()
