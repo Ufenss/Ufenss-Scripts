@@ -1,0 +1,119 @@
+loadstring([[
+-- Ufenss HUB - Sürüklenebilir Versiyon
+local plr = game.Players.LocalPlayer
+local mouse = plr:GetMouse()
+local cam = workspace.CurrentCamera
+local uis = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local lockEnabled = false
+local lockTarget = nil
+local sg = Instance.new("ScreenGui")
+sg.Name = "UfenssGUI"
+sg.ResetOnSpawn = false
+sg.Parent = game.CoreGui
+local frame = Instance.new("Frame", sg)
+frame.Size = UDim2.new(0, 180, 0, 60)
+frame.Position = UDim2.new(0.5, -90, 0.5, -30)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,25)
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,8)
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,24)
+title.BackgroundTransparency = 1
+title.Text = "Ufenss HUB"
+title.TextColor3 = Color3.fromRGB(180,100,255)
+title.TextSize = 18
+title.Font = Enum.Font.GothamBold
+local info = Instance.new("TextLabel", frame)
+info.Size = UDim2.new(1,0,0,30)
+info.Position = UDim2.new(0,0,0,24)
+info.BackgroundTransparency = 1
+info.Text = "T : TP • L : LOCK ON"
+info.TextColor3 = Color3.fromRGB(200,200,220)
+info.TextSize = 14
+info.Font = Enum.Font.Gotham
+-- Sürükleme Sistemi
+local dragging, dragStart, startPos = false, nil, nil
+local function updateDrag(input)
+    if not dragging then return end
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+uis.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        updateDrag(input)
+    end
+end)
+-- En yakın oyuncu
+local function getClosest()
+    local closest, minDist = nil, 150
+    local mpos = Vector2.new(mouse.X, mouse.Y)
+    for _, p in pairs(game.Players:GetPlayers()) do
+        if p ~= plr and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local root = p.Character.HumanoidRootPart
+            local screen, onScreen = cam:WorldToViewportPoint(root.Position)
+            if onScreen then
+                local dist = (Vector2.new(screen.X, screen.Y) - mpos).Magnitude
+                if dist < minDist then
+                    minDist = dist
+                    closest = p
+                end
+            end
+        end
+    end
+    return closest
+end
+-- Tuşlar
+uis.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if input.KeyCode == Enum.KeyCode.T then
+        if mouse.Hit and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            plr.Character.HumanoidRootPart.CFrame = mouse.Hit + Vector3.new(0,3,0)
+        end
+    elseif input.KeyCode == Enum.KeyCode.L then
+        lockEnabled = not lockEnabled
+        if lockEnabled then
+            lockTarget = getClosest()
+            if lockTarget then
+                info.Text = "T : TP • L : LOCK ON (AKTİF)"
+                info.TextColor3 = Color3.fromRGB(100,255,120)
+            else
+                lockEnabled = false
+                info.Text = "T : TP • L : LOCK ON"
+                info.TextColor3 = Color3.fromRGB(200,200,220)
+            end
+        else
+            lockTarget = nil
+            info.Text = "T : TP • L : LOCK ON"
+            info.TextColor3 = Color3.fromRGB(200,200,220)
+        end
+    end
+end)
+-- Lock camera
+rs.RenderStepped:Connect(function()
+    if lockEnabled and lockTarget and lockTarget.Character then
+        local root = lockTarget.Character:FindFirstChild("HumanoidRootPart")
+        if root then
+            cam.CFrame = CFrame.new(cam.CFrame.Position, root.Position + Vector3.new(0,1.5,0))
+        else
+            lockEnabled = false
+            lockTarget = nil
+            info.Text = "T : TP • L : LOCK ON"
+            info.TextColor3 = Color3.fromRGB(200,200,220)
+        end
+    end
+end)
+print("Ufenss HUB yüklendi → Sürüklenebilir | T=TP, L=LOCK")
+]])()
