@@ -1,22 +1,27 @@
 loadstring([[
--- Ufenss HUB - Sürüklenebilir Versiyon
+-- Ufenss HUB - Sürüklenebilir Versiyon + Özel Teşekkür GUI
 local plr = game.Players.LocalPlayer
 local mouse = plr:GetMouse()
 local cam = workspace.CurrentCamera
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
+
 local lockEnabled = false
 local lockTarget = nil
+
 local sg = Instance.new("ScreenGui")
 sg.Name = "UfenssGUI"
 sg.ResetOnSpawn = false
 sg.Parent = game.CoreGui
+
+-- Ana HUB Frame
 local frame = Instance.new("Frame", sg)
 frame.Size = UDim2.new(0, 180, 0, 60)
 frame.Position = UDim2.new(0.5, -90, 0.5, -30)
 frame.BackgroundColor3 = Color3.fromRGB(20,20,25)
 frame.BorderSizePixel = 0
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0,8)
+
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1,0,0,24)
 title.BackgroundTransparency = 1
@@ -24,6 +29,7 @@ title.Text = "Ufenss HUB"
 title.TextColor3 = Color3.fromRGB(180,100,255)
 title.TextSize = 18
 title.Font = Enum.Font.GothamBold
+
 local info = Instance.new("TextLabel", frame)
 info.Size = UDim2.new(1,0,0,30)
 info.Position = UDim2.new(0,0,0,24)
@@ -32,6 +38,7 @@ info.Text = "T : TP • L : LOCK ON"
 info.TextColor3 = Color3.fromRGB(200,200,220)
 info.TextSize = 14
 info.Font = Enum.Font.Gotham
+
 -- Sürükleme Sistemi
 local dragging, dragStart, startPos = false, nil, nil
 local function updateDrag(input)
@@ -39,6 +46,7 @@ local function updateDrag(input)
     local delta = input.Position - dragStart
     frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
+
 title.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
@@ -51,11 +59,79 @@ title.InputBegan:Connect(function(input)
         end)
     end
 end)
+
 uis.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
         updateDrag(input)
     end
 end)
+
+-- Özel Teşekkür GUI
+local thankShown = false
+
+local function showThankYou()
+    if thankShown then return end
+    thankShown = true
+    
+    local thankFrame = Instance.new("Frame", sg)
+    thankFrame.Size = UDim2.new(0, 500, 0, 400)
+    thankFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
+    thankFrame.BackgroundTransparency = 1
+    thankFrame.BorderSizePixel = 0
+    
+    -- Arka plan resmi
+    local bgImage = Instance.new("ImageLabel", thankFrame)
+    bgImage.Size = UDim2.new(1, 0, 1, 0)
+    bgImage.Position = UDim2.new(0, 0, 0, 0)
+    bgImage.BackgroundTransparency = 1
+    bgImage.Image = "rbxassetid://96250562647841"
+    bgImage.ScaleType = Enum.ScaleType.Fit
+    bgImage.ResampleMode = Enum.ResamplerMode.Pixelated
+    
+    -- Ana metin (siyah + stroke, biraz daha üste alındı)
+    local thankText = Instance.new("TextLabel", thankFrame)
+    thankText.Size = UDim2.new(1, 0, 0.35, 0)
+    thankText.Position = UDim2.new(0, 0, 0.05, 0)  -- Üste çekildi (0.15'ten 0.05'e)
+    thankText.BackgroundTransparency = 1
+    thankText.Text = "UFENSS BABAYA BİR TEŞEKKÜR ETMEK YOK MU ?"
+    thankText.TextColor3 = Color3.new(0,0,0)  -- Siyah
+    thankText.TextSize = 32
+    thankText.Font = Enum.Font.GothamBlack
+    thankText.TextWrapped = true
+    thankText.TextStrokeTransparency = 0.4
+    thankText.TextStrokeColor3 = Color3.new(1,1,1)  -- Beyaz stroke
+    
+    -- dc metni (yeşil, stroke eklendi, aynı kaldı)
+    local dcText = Instance.new("TextLabel", thankFrame)
+    dcText.Size = UDim2.new(1, 0, 0.15, 0)
+    dcText.Position = UDim2.new(0, 0, 0.75, 0)
+    dcText.BackgroundTransparency = 1
+    dcText.Text = "dc : ufenss"
+    dcText.TextColor3 = Color3.fromRGB(100, 255, 150)
+    dcText.TextSize = 50
+    dcText.Font = Enum.Font.GothamBold
+    dcText.TextStrokeTransparency = 0.6
+    dcText.TextStrokeColor3 = Color3.new(0,0,0)  -- Siyah stroke eklendi
+    
+    -- Kapat butonu
+    local closeBtn = Instance.new("TextButton", thankFrame)
+    closeBtn.Size = UDim2.new(0, 50, 0, 50)
+    closeBtn.Position = UDim2.new(1, -60, 0, 10)
+    closeBtn.BackgroundColor3 = Color3.fromRGB(220, 40, 40)
+    closeBtn.Text = "X"
+    closeBtn.TextColor3 = Color3.new(1,1,1)
+    closeBtn.TextSize = 35
+    closeBtn.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0,10)
+    
+    closeBtn.MouseButton1Click:Connect(function()
+        thankFrame:Destroy()
+    end)
+end
+
+-- Teşekkür GUI'yi göster
+spawn(showThankYou)
+
 -- En yakın oyuncu
 local function getClosest()
     local closest, minDist = nil, 150
@@ -75,6 +151,7 @@ local function getClosest()
     end
     return closest
 end
+
 -- Tuşlar
 uis.InputBegan:Connect(function(input, gp)
     if gp then return end
@@ -101,6 +178,7 @@ uis.InputBegan:Connect(function(input, gp)
         end
     end
 end)
+
 -- Lock camera
 rs.RenderStepped:Connect(function()
     if lockEnabled and lockTarget and lockTarget.Character then
@@ -115,5 +193,6 @@ rs.RenderStepped:Connect(function()
         end
     end
 end)
-print("Ufenss HUB yüklendi → Sürüklenebilir | T=TP, L=LOCK")
+
+print("Ufenss HUB yüklendi → Sürüklenebilir + Özel Teşekkür GUI | T=TP, L=LOCK")
 ]])()
