@@ -1,2 +1,1 @@
-# Ufenss-Scripts
-My Roblox scripts
+BU SCRIPTI KULLANIYORSAN HARBIDEN KRAL ADAMSINDIR 
