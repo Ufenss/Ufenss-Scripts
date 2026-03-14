@@ -1,4 +1,4 @@
-loadstring([[
+loadstring([[ 
 -- Ufenss HUB - Sürüklenebilir + Teşekkür GUI + ON/OFF + Arkadan Yapışma
 local plr = game.Players.LocalPlayer
 local mouse = plr:GetMouse()
@@ -41,7 +41,7 @@ local info = Instance.new("TextLabel", frame)
 info.Size = UDim2.new(1,0,0,50)
 info.Position = UDim2.new(0,0,0,24)
 info.BackgroundTransparency = 1
-info.Text = "T : TP    L : LOCK ON\nF : STICK BEHIND"
+info.Text = "T : TP   Z : LOCK ON\nV : STICK BEHIND"
 info.TextColor3 = Color3.fromRGB(220, 220, 240)
 info.TextSize = 14
 info.Font = Enum.Font.Gotham
@@ -49,6 +49,7 @@ info.TextYAlignment = Enum.TextYAlignment.Top
 
 -- Sürükleme Sistemi
 local dragging, dragStart, startPos = false, nil, nil
+
 local function updateDrag(input)
     if not dragging then return end
     local delta = input.Position - dragStart
@@ -60,6 +61,7 @@ title.InputBegan:Connect(function(input)
         dragging = true
         dragStart = input.Position
         startPos = frame.Position
+        
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
@@ -80,42 +82,39 @@ thankSound.SoundId = "rbxassetid://82659851472919"
 thankSound.Volume = 1.0
 thankSound.Looped = false
 thankSound.Parent = sg
-thankSound:Play()   -- ← direkt çal
+thankSound:Play()
 
--- Teşekkür GUI (mor renk ile dc : ufenss)
+-- Teşekkür GUI
 local thankShown = false
 local function showThankYou()
     if thankShown then return end
     thankShown = true
-   
+    
     local thankFrame = Instance.new("Frame", sg)
     thankFrame.Size = UDim2.new(0, 500, 0, 400)
     thankFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
     thankFrame.BackgroundTransparency = 1
     thankFrame.BorderSizePixel = 0
-   
-    -- Arka plan resmi
+    
     local bgImage = Instance.new("ImageLabel", thankFrame)
     bgImage.Size = UDim2.new(1, 0, 1, 0)
     bgImage.BackgroundTransparency = 1
     bgImage.Image = "rbxassetid://116734431559528"
     bgImage.ScaleType = Enum.ScaleType.Fit
     bgImage.ResampleMode = Enum.ResamplerMode.Pixelated
-   
-    -- dc : ufenss (ana GUI ile aynı mor ton)
+    
     local dcText = Instance.new("TextLabel", thankFrame)
     dcText.Size = UDim2.new(1, 0, 0.15, 0)
     dcText.Position = UDim2.new(0, 0, 0.75, 0)
     dcText.BackgroundTransparency = 1
     dcText.Text = "dc : ufenss"
-    dcText.TextColor3 = Color3.fromRGB(140, 80, 255)   -- ← aynı renk yapıldı
+    dcText.TextColor3 = Color3.fromRGB(140, 80, 255)
     dcText.TextSize = 60
     dcText.Font = Enum.Font.GothamBold
     dcText.TextStrokeTransparency = 0.5
     dcText.TextStrokeColor3 = Color3.new(0,0,0)
     dcText.TextXAlignment = Enum.TextXAlignment.Center
-   
-    -- Kapat butonu
+    
     local closeBtn = Instance.new("TextButton", thankFrame)
     closeBtn.Size = UDim2.new(0, 50, 0, 50)
     closeBtn.Position = UDim2.new(1, -60, 0, 10)
@@ -125,23 +124,23 @@ local function showThankYou()
     closeBtn.TextSize = 35
     closeBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0,10)
-   
+    
     local btnStroke = Instance.new("UIStroke", closeBtn)
     btnStroke.Color = Color3.fromRGB(10,10,15)
     btnStroke.Thickness = 2
-   
+    
     closeBtn.MouseButton1Click:Connect(function()
         thankFrame:Destroy()
         thankSound:Stop()
     end)
 end
-
-spawn(showThankYou)  -- script başlar başlamaz teşekkür ekranı
+spawn(showThankYou)
 
 -- En yakın oyuncu fonksiyonu
 local function getClosest()
     local closest, minDist = nil, 150
     local mpos = Vector2.new(mouse.X, mouse.Y)
+    
     for _, p in pairs(game.Players:GetPlayers()) do
         if p ~= plr and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
             local root = p.Character.HumanoidRootPart
@@ -158,7 +157,7 @@ local function getClosest()
     return closest
 end
 
--- Tuşlar
+-- Tuşlar (L → Z, F → V olarak değiştirildi)
 uis.InputBegan:Connect(function(input, gp)
     if gp then return end
     
@@ -167,39 +166,41 @@ uis.InputBegan:Connect(function(input, gp)
             plr.Character.HumanoidRootPart.CFrame = mouse.Hit + Vector3.new(0,3,0)
         end
         
-    elseif input.KeyCode == Enum.KeyCode.L then
+    elseif input.KeyCode == Enum.KeyCode.Z then    -- ← L yerine Z
         lockEnabled = not lockEnabled
+        
         if lockEnabled then
             lockTarget = getClosest()
             if lockTarget then
-                info.Text = "T : TP    L : LOCK ON ON\nF : STICK BEHIND"
+                info.Text = "T : TP   Z : LOCK ON ON\nV : STICK BEHIND"
                 info.TextColor3 = Color3.fromRGB(180, 120, 255)
             else
                 lockEnabled = false
-                info.Text = "T : TP    L : LOCK ON\nF : STICK BEHIND"
+                info.Text = "T : TP   Z : LOCK ON\nV : STICK BEHIND"
                 info.TextColor3 = Color3.fromRGB(220, 220, 240)
             end
         else
             lockTarget = nil
-            info.Text = "T : TP    L : LOCK ON OFF\nF : STICK BEHIND"
+            info.Text = "T : TP   Z : LOCK ON OFF\nV : STICK BEHIND"
             info.TextColor3 = Color3.fromRGB(220, 220, 240)
         end
         
-    elseif input.KeyCode == Enum.KeyCode.F then
+    elseif input.KeyCode == Enum.KeyCode.V then    -- ← F yerine V
         stickEnabled = not stickEnabled
+        
         if stickEnabled then
             stickTarget = getClosest()
             if stickTarget then
-                info.Text = "T : TP    L : LOCK ON\nF : STICK BEHIND ON"
+                info.Text = "T : TP   Z : LOCK ON\nV : STICK BEHIND ON"
                 info.TextColor3 = Color3.fromRGB(200, 100, 255)
             else
                 stickEnabled = false
-                info.Text = "T : TP    L : LOCK ON\nF : STICK BEHIND"
+                info.Text = "T : TP   Z : LOCK ON\nV : STICK BEHIND"
                 info.TextColor3 = Color3.fromRGB(220, 220, 240)
             end
         else
             stickTarget = nil
-            info.Text = "T : TP    L : LOCK ON\nF : STICK BEHIND OFF"
+            info.Text = "T : TP   Z : LOCK ON\nV : STICK BEHIND OFF"
             info.TextColor3 = Color3.fromRGB(220, 220, 240)
         end
     end
@@ -214,7 +215,7 @@ rs.RenderStepped:Connect(function()
         else
             lockEnabled = false
             lockTarget = nil
-            info.Text = "T : TP    L : LOCK ON OFF\nF : STICK BEHIND"
+            info.Text = "T : TP   Z : LOCK ON OFF\nV : STICK BEHIND"
             info.TextColor3 = Color3.fromRGB(220, 220, 240)
         end
     end
@@ -228,14 +229,13 @@ rs.Heartbeat:Connect(function()
     if not stickTarget or not stickTarget.Character then
         stickEnabled = false
         stickTarget = nil
-        info.Text = "T : TP    L : LOCK ON\nF : STICK BEHIND OFF"
+        info.Text = "T : TP   Z : LOCK ON\nV : STICK BEHIND OFF"
         info.TextColor3 = Color3.fromRGB(220, 220, 240)
         return
     end
     
     local targetRoot = stickTarget.Character:FindFirstChild("HumanoidRootPart")
     local myRoot = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
-    
     if not targetRoot or not myRoot then return end
     
     local lookVector = targetRoot.CFrame.LookVector
@@ -245,5 +245,5 @@ rs.Heartbeat:Connect(function()
     myRoot.CFrame = CFrame.new(behindPos, targetRoot.Position)
 end)
 
-print("Ufenss HUB yüklendi → Teşekkür sadece dc : ufenss | ON/OFF aktif")
+print("Ufenss HUB yüklendi → Teşekkür sadece dc : ufenss | tuşlar güncellendi (Z & V)")
 ]])()
